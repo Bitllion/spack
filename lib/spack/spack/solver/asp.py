@@ -1149,15 +1149,22 @@ class SpackSolverSetup(object):
             raise RuntimeError(msg)
         return clauses
 
-    def _spec_clauses(self, spec, body=False, transitive=True, expand_hashes=False):
+    def _spec_clauses(
+            self,
+            spec,
+            body=False,
+            transitive=True,
+            expand_hashes=False,
+    ):
         """Return a list of clauses for a spec mandates are true.
 
         Arguments:
             spec (spack.spec.Spec): the spec to analyze
             body (bool): if True, generate clauses to be used in rule bodies
                 (final values) instead of rule heads (setters).
-            transitive (bool): if False, don't generate clauses from
-                dependencies (default True)
+            transitive (bool or tuple): if False, don't generate clauses from
+                dependencies. If True, generate from all dependencies. If a tuple,
+                generate for all deptyeps in the tuple (default True)
             expand_hashes (bool): if True, descend into hashes of concrete specs
                 (default False)
 
@@ -1273,7 +1280,8 @@ class SpackSolverSetup(object):
                     for dtype in edge.deptypes:
                         clauses.append(fn.depends_on(spec.name, edge.spec.name, dtype))
 
-            for dep in spec.traverse(root=False):
+            deptype = "all" if transitive is True else transitive
+            for dep in spec.traverse(root=False, deptype=deptype):
                 if spec.concrete:
                     clauses.append(fn.hash(dep.name, dep.dag_hash()))
                 if not spec.concrete or expand_hashes:
