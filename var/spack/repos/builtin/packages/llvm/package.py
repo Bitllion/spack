@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -26,63 +26,61 @@ class Llvm(CMakePackage, CudaPackage):
     url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
     list_url = "https://releases.llvm.org/download.html"
     git = "https://github.com/llvm/llvm-project"
-    maintainers = ["trws", "haampie"]
+    maintainers("trws", "haampie")
 
     tags = ["e4s"]
 
-    generator = "Ninja"
+    generator("ninja")
 
     family = "compiler"  # Used by lmod
 
-    # fmt: off
-    version('main', branch='main')
-    version('14.0.6', sha256='98f15f842700bdb7220a166c8d2739a03a72e775b67031205078f39dd756a055')
-    version('14.0.5', sha256='a4a57f029cb81f04618e05853f05fc2d21b64353c760977d8e7799bf7218a23a')
-    version('14.0.4', sha256='1333236f9bee38658762076be4236cb5ebf15ae9b7f2bfce6946b96ae962dc73')
-    version('14.0.3', sha256='0e1d049b050127ecf6286107e9a4400b0550f841d5d2288b9d31fd32ed0683d5')
-    version('14.0.2', sha256='ca52232b3451c8e017f00eb882277707c13e30fac1271ec97015f6d0eeb383d1')
-    version('14.0.1', sha256='c8be00406e872c8a24f8571cf6f5517b73ae707104724b1fd1db2f0af9544019')
-    version('14.0.0', sha256='87b1a068b370df5b79a892fdb2935922a8efb1fddec4cc506e30fe57b6a1d9c4')
-    version('13.0.1', sha256='09c50d558bd975c41157364421820228df66632802a4a6a7c9c17f86a7340802')
-    version('13.0.0', sha256='a1131358f1f9f819df73fa6bff505f2c49d176e9eef0a3aedd1fdbce3b4630e8')
-    version('12.0.1', sha256='66b64aa301244975a4aea489f402f205cde2f53dd722dad9e7b77a0459b4c8df')
-    version('12.0.0', sha256='8e6c99e482bb16a450165176c2d881804976a2d770e0445af4375e78a1fbf19c')
-    version('11.1.0', sha256='53a0719f3f4b0388013cfffd7b10c7d5682eece1929a9553c722348d1f866e79')
-    version('11.0.1', sha256='9c7ad8e8ec77c5bde8eb4afa105a318fd1ded7dff3747d14f012758719d7171b')
-    version('11.0.0', sha256='8ad4ddbafac4f2c8f2ea523c2c4196f940e8e16f9e635210537582a48622a5d5')
-    version('10.0.1', sha256='c7ccb735c37b4ec470f66a6c35fbae4f029c0f88038f6977180b1a8ddc255637')
-    version('10.0.0', sha256='b81c96d2f8f40dc61b14a167513d87c0d813aae0251e06e11ae8a4384ca15451')
-    version('9.0.1', sha256='be7b034641a5fda51ffca7f5d840b1a768737779f75f7c4fd18fe2d37820289a')
-    version('9.0.0', sha256='7807fac25330e24e9955ca46cd855dd34bbc9cc4fdba8322366206654d1036f2')
-    version('8.0.1', sha256='5b18f6111c7aee7c0933c355877d4abcfe6cb40c1a64178f28821849c725c841')
-    version('8.0.0', sha256='d81238b4a69e93e29f74ce56f8107cbfcf0c7d7b40510b7879e98cc031e25167')
-    version('7.1.0', sha256='71c93979f20e01f1a1cc839a247945f556fa5e63abf2084e8468b238080fd839')
-    version('7.0.1', sha256='f17a6cd401e8fd8f811fbfbb36dcb4f455f898c9d03af4044807ad005df9f3c0')
-    version('6.0.1', sha256='aefadceb231f4c195fe6d6cd3b1a010b269c8a22410f339b5a089c2e902aa177')
-    version('6.0.0', sha256='1946ec629c88d30122afa072d3c6a89cc5d5e4e2bb28dc63b2f9ebcc7917ee64')
-    version('5.0.2', sha256='fe87aa11558c08856739bfd9bd971263a28657663cb0c3a0af01b94f03b0b795')
-    version('5.0.1', sha256='84ca454abf262579814a2a2b846569f6e0cb3e16dc33ca3642b4f1dff6fbafd3')
-    version('5.0.0', sha256='1f1843315657a4371d8ca37f01265fa9aae17dbcf46d2d0a95c1fdb3c6a4bab6')
-    version('4.0.1', sha256='cd664fb3eec3208c08fb61189c00c9118c290b3be5adb3215a97b24255618be5')
-    version('4.0.0', sha256='28ca4b2fc434cb1f558e8865386c233c2a6134437249b8b3765ae745ffa56a34')
-    version('3.9.1', sha256='f5b6922a5c65f9232f83d89831191f2c3ccf4f41fdd8c63e6645bbf578c4ab92')
-    version('3.9.0', sha256='9c6563a72c8b5b79941c773937d997dd2b1b5b3f640136d02719ec19f35e0333')
-    version('3.8.1', sha256='69360f0648fde0dc3d3c4b339624613f3bc2a89c4858933bc3871a250ad02826')
-    version('3.8.0', sha256='b5cc5974cc2fd4e9e49e1bbd0700f872501a8678bd9694fa2b36c65c026df1d1')
-    version('3.7.1', sha256='d2cb0eb9b8eb21e07605bfe5e7a5c6c5f5f8c2efdac01ec1da6ffacaabe4195a')
-    version('3.7.0', sha256='dc00bc230be2006fb87b84f6fe4800ca28bc98e6692811a98195da53c9cb28c6')
-    version('3.6.2', sha256='f75d703a388ba01d607f9cf96180863a5e4a106827ade17b221d43e6db20778a')
-    version('3.5.1', sha256='5d739684170d5b2b304e4fb521532d5c8281492f71e1a8568187bfa38eb5909d')
-    # fmt: on
+    version("main", branch="main")
+    version("16.0.3", sha256="0bd71bc687a4e5a250c40afb0decefc50c85178fcce726137b682039de63919b")
+    version("16.0.2", sha256="97c3c6aafb53c4bb0ed2781a18d6f05e75445e24bb1dc57a32b74f8d710ac19f")
+    version("16.0.1", sha256="b5a9ff1793b1e2d388a3819bf35797002b1d2e40bb35a10c65605e0ea1435271")
+    version("16.0.0", sha256="cba969a0782a3a398658d439f047b5e548ea04724f4fbfdbe17cfc946f4cd3ed")
+    version("15.0.7", sha256="42a0088f148edcf6c770dfc780a7273014a9a89b66f357c761b4ca7c8dfa10ba")
+    version("15.0.6", sha256="4d857d7a180918bdacd09a5910bf9743c9861a1e49cb065a85f7a990f812161d")
+    version("15.0.5", sha256="c47640269e0251e009ae18a25162df4e20e175885286e21d28c054b084b991a4")
+    version("15.0.4", sha256="e24b4d3bf7821dcb1c901d1e09096c1f88fb00095c5a6ef893baab4836975e52")
+    version("15.0.3", sha256="8ac8e4c0982bf236526d737d385db5e1e66543ab217a9355d54159659eae3774")
+    version("15.0.2", sha256="dc11d35e60ab61792baa607dff080c993b39de23fb93b3d3369ba15b0601c307")
+    version("15.0.1", sha256="20bccb964e39f604fdc16d1258f94d2053fbdcdab2b2f6d5e20e6095ec403c00")
+    version("15.0.0", sha256="36d83cd84e1caf2bcfda1669c029e2b949adb9860cff01e7d3246ac2348b11ae")
+    version("14.0.6", sha256="98f15f842700bdb7220a166c8d2739a03a72e775b67031205078f39dd756a055")
+    version("14.0.5", sha256="a4a57f029cb81f04618e05853f05fc2d21b64353c760977d8e7799bf7218a23a")
+    version("14.0.4", sha256="1333236f9bee38658762076be4236cb5ebf15ae9b7f2bfce6946b96ae962dc73")
+    version("14.0.3", sha256="0e1d049b050127ecf6286107e9a4400b0550f841d5d2288b9d31fd32ed0683d5")
+    version("14.0.2", sha256="ca52232b3451c8e017f00eb882277707c13e30fac1271ec97015f6d0eeb383d1")
+    version("14.0.1", sha256="c8be00406e872c8a24f8571cf6f5517b73ae707104724b1fd1db2f0af9544019")
+    version("14.0.0", sha256="87b1a068b370df5b79a892fdb2935922a8efb1fddec4cc506e30fe57b6a1d9c4")
+    version("13.0.1", sha256="09c50d558bd975c41157364421820228df66632802a4a6a7c9c17f86a7340802")
+    version("13.0.0", sha256="a1131358f1f9f819df73fa6bff505f2c49d176e9eef0a3aedd1fdbce3b4630e8")
+    version("12.0.1", sha256="66b64aa301244975a4aea489f402f205cde2f53dd722dad9e7b77a0459b4c8df")
+    version("12.0.0", sha256="8e6c99e482bb16a450165176c2d881804976a2d770e0445af4375e78a1fbf19c")
+    version("11.1.0", sha256="53a0719f3f4b0388013cfffd7b10c7d5682eece1929a9553c722348d1f866e79")
+    version("11.0.1", sha256="9c7ad8e8ec77c5bde8eb4afa105a318fd1ded7dff3747d14f012758719d7171b")
+    version("11.0.0", sha256="8ad4ddbafac4f2c8f2ea523c2c4196f940e8e16f9e635210537582a48622a5d5")
+    version("10.0.1", sha256="c7ccb735c37b4ec470f66a6c35fbae4f029c0f88038f6977180b1a8ddc255637")
+    version("10.0.0", sha256="b81c96d2f8f40dc61b14a167513d87c0d813aae0251e06e11ae8a4384ca15451")
+    version("9.0.1", sha256="be7b034641a5fda51ffca7f5d840b1a768737779f75f7c4fd18fe2d37820289a")
+    version("9.0.0", sha256="7807fac25330e24e9955ca46cd855dd34bbc9cc4fdba8322366206654d1036f2")
+    version("8.0.1", sha256="5b18f6111c7aee7c0933c355877d4abcfe6cb40c1a64178f28821849c725c841")
+    version("8.0.0", sha256="d81238b4a69e93e29f74ce56f8107cbfcf0c7d7b40510b7879e98cc031e25167")
+    version("7.1.0", sha256="71c93979f20e01f1a1cc839a247945f556fa5e63abf2084e8468b238080fd839")
+    version("7.0.1", sha256="f17a6cd401e8fd8f811fbfbb36dcb4f455f898c9d03af4044807ad005df9f3c0")
+    version("6.0.1", sha256="aefadceb231f4c195fe6d6cd3b1a010b269c8a22410f339b5a089c2e902aa177")
+    version("6.0.0", sha256="1946ec629c88d30122afa072d3c6a89cc5d5e4e2bb28dc63b2f9ebcc7917ee64")
+    version("5.0.2", sha256="fe87aa11558c08856739bfd9bd971263a28657663cb0c3a0af01b94f03b0b795")
+    version("5.0.1", sha256="84ca454abf262579814a2a2b846569f6e0cb3e16dc33ca3642b4f1dff6fbafd3")
+    version("5.0.0", sha256="1f1843315657a4371d8ca37f01265fa9aae17dbcf46d2d0a95c1fdb3c6a4bab6")
 
     # NOTE: The debug version of LLVM is an order of magnitude larger than
     # the release version, and may take up 20-30 GB of space. If you want
     # to save space, build with `build_type=Release`.
 
     variant(
-        "clang",
-        default=True,
-        description="Build the LLVM C/C++/Objective-C compiler frontend",
+        "clang", default=True, description="Build the LLVM C/C++/Objective-C compiler frontend"
     )
     variant(
         "flang",
@@ -91,19 +89,11 @@ class Llvm(CMakePackage, CudaPackage):
         description="Build the LLVM Fortran compiler frontend "
         "(experimental - parser only, needs GCC)",
     )
-    variant(
-        "omp_debug",
-        default=False,
-        description="Include debugging code in OpenMP runtime libraries",
-    )
     variant("lldb", default=True, when="+clang", description="Build the LLVM debugger")
     variant("lld", default=True, description="Build the LLVM linker")
     variant("mlir", default=False, when="@10:", description="Build with MLIR support")
     variant(
-        "internal_unwind",
-        default=True,
-        when="+clang",
-        description="Build the libcxxabi libunwind",
+        "internal_unwind", default=True, when="+clang", description="Build the libcxxabi libunwind"
     )
     variant(
         "polly",
@@ -111,10 +101,19 @@ class Llvm(CMakePackage, CudaPackage):
         description="Build the LLVM polyhedral optimization plugin, " "only builds for 3.7.0+",
     )
     variant(
-        "libcxx",
+        "libcxx", default=True, when="+clang", description="Build the LLVM C++ standard library"
+    )
+    variant(
+        "libomptarget",
         default=True,
         when="+clang",
-        description="Build the LLVM C++ standard library",
+        description="Build the OpenMP offloading library",
+    )
+    variant(
+        "omp_debug",
+        default=False,
+        when="+libomptarget",
+        description="Include debugging code in OpenMP runtime libraries",
     )
     variant(
         "compiler-rt",
@@ -127,11 +126,7 @@ class Llvm(CMakePackage, CudaPackage):
         default=(sys.platform != "darwin"),
         description="Add support for LTO with the gold linker plugin",
     )
-    variant(
-        "split_dwarf",
-        default=False,
-        description="Build with split dwarf information",
-    )
+    variant("split_dwarf", default=False, description="Build with split dwarf information")
     variant(
         "llvm_dylib",
         default=True,
@@ -145,7 +140,7 @@ class Llvm(CMakePackage, CudaPackage):
     )
     variant(
         "targets",
-        default="none",
+        default="all",
         description=(
             "What targets to build. Spack's target family is always added "
             "(e.g. X86 is automatically enabled when targeting znver2)."
@@ -173,12 +168,6 @@ class Llvm(CMakePackage, CudaPackage):
             "xcore",
         ),
         multi=True,
-    )
-    variant(
-        "build_type",
-        default="Release",
-        description="CMake build type",
-        values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel"),
     )
     variant(
         "omp_tsan",
@@ -209,6 +198,12 @@ class Llvm(CMakePackage, CudaPackage):
     variant(
         "z3", default=False, when="+clang @8:", description="Use Z3 for the clang static analyzer"
     )
+    variant(
+        "zstd",
+        default=False,
+        when="@15:",
+        description="Enable zstd support for static analyzer / lld",
+    )
 
     provides("libllvm@14", when="@14.0.0:14")
     provides("libllvm@13", when="@13.0.0:13")
@@ -228,14 +223,12 @@ class Llvm(CMakePackage, CudaPackage):
     # Build dependency
     depends_on("cmake@3.4.3:", type="build")
     depends_on("cmake@3.13.4:", type="build", when="@12:")
-    depends_on("ninja", type="build")
-    depends_on("python@2.7:2.8", when="@:4 ~python", type="build")
-    depends_on("python", when="@5: ~python", type="build")
+    depends_on("cmake@3.20:", type="build", when="@16:")
+    depends_on("python", when="~python", type="build")
     depends_on("pkgconfig", type="build")
 
     # Universal dependency
-    depends_on("python@2.7:2.8", when="@:4+python")
-    depends_on("python", when="@5:+python")
+    depends_on("python", when="+python")
 
     # clang and clang-tools dependencies
     depends_on("z3@4.7.1:", when="+z3")
@@ -243,11 +236,15 @@ class Llvm(CMakePackage, CudaPackage):
     # openmp dependencies
     depends_on("perl-data-dumper", type=("build"))
     depends_on("hwloc")
-    depends_on("libelf", when="+cuda")  # libomptarget
-    depends_on("libffi", when="+cuda")  # libomptarget
+    depends_on("hwloc@2.0.1:", when="@13")
+    depends_on("elf", when="+cuda")  # libomptarget
+    depends_on("libffi", when="+libomptarget")  # libomptarget
 
     # llvm-config --system-libs libraries.
     depends_on("zlib")
+
+    # needs zstd cmake config file, which is not added when built with makefile.
+    depends_on("zstd build_system=cmake", when="+zstd")
 
     # lldb dependencies
     with when("+lldb +python"):
@@ -256,20 +253,18 @@ class Llvm(CMakePackage, CudaPackage):
         depends_on("swig@3:", when="@12:")
     depends_on("libedit", when="+lldb")
     depends_on("ncurses", when="+lldb")
-    depends_on("py-six", when="@5.0.0: +lldb +python")
+    depends_on("py-six", when="+lldb+python")
 
     # gold support, required for some features
-    depends_on("binutils+gold+ld+plugins", when="+gold")
-
-    # polly plugin
-    depends_on("gmp", when="@:3.6 +polly")
-    depends_on("isl", when="@:3.6 +polly")
+    depends_on("binutils+gold+ld+plugins+headers", when="+gold")
 
     # Older LLVM do not build with newer compilers, and vice versa
+    with when("@16:"):
+        conflicts("%gcc@:7.0")
+        conflicts("%clang@:4")
+        conflicts("%apple-clang@:9")
     conflicts("%gcc@8:", when="@:5")
     conflicts("%gcc@:5.0", when="@8:")
-    # clang/lib: a lambda parameter cannot shadow an explicitly captured entity
-    conflicts("%clang@8:", when="@:4")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
 
@@ -285,13 +280,14 @@ class Llvm(CMakePackage, CudaPackage):
     conflicts("%clang@:10", when="@13:+libcxx")
     conflicts("%apple-clang@:11", when="@13:+libcxx")
 
-    # libcxx-4 and compiler-rt-4 fail to build with "newer" clang and gcc versions:
-    conflicts("%gcc@7:", when="@:4+libcxx")
-    conflicts("%clang@6:", when="@:4+libcxx")
-    conflicts("%apple-clang@6:", when="@:4+libcxx")
-    conflicts("%gcc@7:", when="@:4+compiler-rt")
-    conflicts("%clang@6:", when="@:4+compiler-rt")
-    conflicts("%apple-clang@6:", when="@:4+compiler-rt")
+    # libomptarget
+    conflicts("+cuda", when="@15:")  # +cuda variant is obselete since LLVM 15
+    conflicts(
+        "targets=none",
+        when="+libomptarget",
+        msg="Non-host backends needed for offloading, set targets=all",
+    )
+    conflicts("~lld", when="+libomptarget")
 
     # cuda_arch value must be specified
     conflicts("cuda_arch=none", when="+cuda", msg="A value for cuda_arch must be specified.")
@@ -301,14 +297,10 @@ class Llvm(CMakePackage, CudaPackage):
     # Fixed in upstream versions of both
     conflicts("^cmake@3.19.0", when="@6:11.0.0")
 
-    # Github issue #4986
-    patch("llvm_gcc7.patch", when="@4.0.0:4.0.1+lldb %gcc@7.0:")
-
     # sys/ustat.h has been removed in favour of statfs from glibc-2.28. Use fixed sizes:
     patch("llvm5-sanitizer-ustat.patch", when="@4:6.0.0+compiler-rt")
 
     # Fix lld templates: https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=230463
-    patch("llvm4-lld-ELF-Symbols.patch", when="@4+lld%clang@6:")
     patch("llvm5-lld-ELF-Symbols.patch", when="@5+lld%clang@7:")
 
     # Fix missing std:size_t in 'llvm@4:5' when built with '%clang@7:'
@@ -337,8 +329,8 @@ class Llvm(CMakePackage, CudaPackage):
     patch("llvm_py37.patch", when="@4:6 ^python@3.7:")
 
     # https://github.com/spack/spack/issues/19625,
-    # merged in llvm-11.0.0_rc2, but not found in 11.0.1
-    patch("lldb_external_ncurses-10.patch", when="@10.0.0:11.0.1+lldb")
+    # merged in llvm-11.0.0_rc2, first available in 12.0.0
+    patch("lldb_external_ncurses-10.patch", when="@10.0.0:11+lldb")
 
     # https://github.com/spack/spack/issues/19908
     # merged in llvm main prior to 12.0.0
@@ -356,7 +348,10 @@ class Llvm(CMakePackage, CudaPackage):
 
     # add -lpthread to build OpenMP libraries with Fujitsu compiler
     patch("llvm12-thread.patch", when="@12 %fj")
-    patch("llvm13-thread.patch", when="@13 %fj")
+
+    # add -lpthread to build OpenMP libraries
+    patch("llvm13-14-thread.patch", when="@13:14")
+    patch("llvm15-thread.patch", when="@15")
 
     # avoid build failed with Fujitsu compiler
     patch("llvm13-fujitsu.patch", when="@13 %fj")
@@ -372,6 +367,19 @@ class Llvm(CMakePackage, CudaPackage):
         "https://github.com/llvm/llvm-project/commit/b498303066a63a203d24f739b2d2e0e56dca70d1.patch?full_index=1",
         sha256="514926d661635de47972c7d403c9c4669235aa51e22e56d44676d2a2709179b6",
         when="@8:11",
+    )
+
+    # fix detection of LLDB_PYTHON_EXE_RELATIVE_PATH
+    # see https://reviews.llvm.org/D133513
+    # TODO: adjust version constraint and switch to fetching from the upstream GitHub repo
+    #  when/if the bugfix is merged
+    patch("D133513.diff", level=0, when="@14:15+lldb+python")
+
+    # Fix hwloc@:2.3 (Conditionally disable hwloc@2.0 and hwloc@2.4 code)
+    patch(
+        "https://github.com/llvm/llvm-project/commit/3a362a9f38b95978160377ee408dbc7d14af9aad.patch?full_index=1",
+        sha256="25bc503f7855229620e56e76161cf4654945aef0be493a2d8d9e94a088157b7c",
+        when="@14:15",
     )
 
     # The functions and attributes below implement external package
@@ -564,7 +572,7 @@ class Llvm(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         spec = self.spec
-        define = CMakePackage.define
+        define = self.define
         from_variant = self.define_from_variant
 
         python = spec["python"]
@@ -572,12 +580,12 @@ class Llvm(CMakePackage, CudaPackage):
             define("LLVM_REQUIRES_RTTI", True),
             define("LLVM_ENABLE_RTTI", True),
             define("LLVM_ENABLE_EH", True),
-            define("LLVM_ENABLE_TERMINFO", False),
             define("LLVM_ENABLE_LIBXML2", False),
             define("CLANG_DEFAULT_OPENMP_RUNTIME", "libomp"),
             define("PYTHON_EXECUTABLE", python.command.path),
             define("LIBOMP_USE_HWLOC", True),
             define("LIBOMP_HWLOC_INSTALL_DIR", spec["hwloc"].prefix),
+            from_variant("LLVM_ENABLE_ZSTD", "zstd"),
         ]
 
         version_suffix = spec.variants["version_suffix"].value
@@ -615,9 +623,7 @@ class Llvm(CMakePackage, CudaPackage):
                     [
                         define("LIBOMPTARGET_NVPTX_ENABLE_BCLIB", True),
                         # work around bad libelf detection in libomptarget
-                        define(
-                            "LIBOMPTARGET_DEP_LIBELF_INCLUDE_DIR", spec["libelf"].prefix.include
-                        ),
+                        define("LIBOMPTARGET_DEP_LIBELF_INCLUDE_DIR", spec["elf"].prefix.include),
                     ]
                 )
         else:
@@ -636,7 +642,11 @@ class Llvm(CMakePackage, CudaPackage):
         if "+lldb" in spec:
             projects.append("lldb")
             cmake_args.append(define("LLDB_ENABLE_LIBEDIT", True))
-            cmake_args.append(define("LLDB_ENABLE_NCURSES", True))
+            cmake_args.append(define("LLDB_ENABLE_CURSES", True))
+            if spec["ncurses"].satisfies("+termlib"):
+                cmake_args.append(define("LLVM_ENABLE_TERMINFO", True))
+            else:
+                cmake_args.append(define("LLVM_ENABLE_TERMINFO", False))
             cmake_args.append(define("LLDB_ENABLE_LIBXML2", False))
             if spec.version >= Version("10"):
                 cmake_args.append(from_variant("LLDB_ENABLE_PYTHON", "python"))
@@ -644,6 +654,8 @@ class Llvm(CMakePackage, CudaPackage):
                 cmake_args.append(define("LLDB_DISABLE_PYTHON", "~python" in spec))
             if spec.satisfies("@5.0.0: +python"):
                 cmake_args.append(define("LLDB_USE_SYSTEM_SIX", True))
+        else:
+            cmake_args.append(define("LLVM_ENABLE_TERMINFO", False))
 
         if "+gold" in spec:
             cmake_args.append(define("LLVM_BINUTILS_INCDIR", spec["binutils"].prefix.include))
@@ -656,6 +668,11 @@ class Llvm(CMakePackage, CudaPackage):
             else:
                 projects.append("openmp")
 
+            if "+libomptarget" in spec:
+                cmake_args.append(define("OPENMP_ENABLE_LIBOMPTARGET", True))
+            else:
+                cmake_args.append(define("OPENMP_ENABLE_LIBOMPTARGET", False))
+
             if "@8" in spec:
                 cmake_args.append(from_variant("CLANG_ANALYZER_ENABLE_Z3_SOLVER", "z3"))
             elif "@9:" in spec:
@@ -666,14 +683,22 @@ class Llvm(CMakePackage, CudaPackage):
         if "+lld" in spec:
             projects.append("lld")
         if "+compiler-rt" in spec:
-            projects.append("compiler-rt")
+            if self.spec.satisfies("@15.0.0:"):
+                runtimes.append("compiler-rt")
+            else:
+                projects.append("compiler-rt")
         if "+libcxx" in spec:
-            projects.append("libcxx")
-            projects.append("libcxxabi")
+            if self.spec.satisfies("@15.0.0:"):
+                runtimes.extend(["libcxx", "libcxxabi"])
+            else:
+                projects.extend(["libcxx", "libcxxabi"])
         if "+mlir" in spec:
             projects.append("mlir")
         if "+internal_unwind" in spec:
-            projects.append("libunwind")
+            if self.spec.satisfies("@15.0.0:"):
+                runtimes.append("libunwind")
+            else:
+                projects.append("libunwind")
         if "+polly" in spec:
             projects.append("polly")
             cmake_args.append(define("LINK_POLLY_INTO_TOOLS", True))
@@ -696,20 +721,15 @@ class Llvm(CMakePackage, CudaPackage):
         cmake_args.append(from_variant("LIBOMP_TSAN_SUPPORT", "omp_tsan"))
 
         if self.compiler.name == "gcc":
-            compiler = Executable(self.compiler.cc)
-            gcc_output = compiler("-print-search-dirs", output=str, error=str)
-
-            for line in gcc_output.splitlines():
-                if line.startswith("install:"):
-                    # Get path and strip any whitespace
-                    # (causes oddity with ancestor)
-                    gcc_prefix = line.split(":")[1].strip()
-                    gcc_prefix = ancestor(gcc_prefix, 4)
-                    break
-            cmake_args.append(define("GCC_INSTALL_PREFIX", gcc_prefix))
+            cmake_args.append(define("GCC_INSTALL_PREFIX", self.compiler.prefix))
 
         if self.spec.satisfies("~code_signing platform=darwin"):
             cmake_args.append(define("LLDB_USE_SYSTEM_DEBUGSERVER", True))
+
+        # Enable building with CLT [and not require full Xcode]
+        # https://github.com/llvm/llvm-project/issues/57037
+        if self.spec.satisfies("@15.0.0: platform=darwin"):
+            cmake_args.append(define("BUILTINS_CMAKE_ARGS", "-DCOMPILER_RT_ENABLE_IOS=OFF"))
 
         # Semicolon seperated list of projects to enable
         cmake_args.append(define("LLVM_ENABLE_PROJECTS", projects))
@@ -723,7 +743,7 @@ class Llvm(CMakePackage, CudaPackage):
     @run_after("install")
     def post_install(self):
         spec = self.spec
-        define = CMakePackage.define
+        define = self.define
 
         # unnecessary if we build openmp via LLVM_ENABLE_RUNTIMES
         if "+cuda ~omp_as_runtime" in self.spec:
@@ -745,9 +765,7 @@ class Llvm(CMakePackage, CudaPackage):
                 cmake_args.extend(
                     [
                         define("LIBOMPTARGET_NVPTX_ENABLE_BCLIB", True),
-                        define(
-                            "LIBOMPTARGET_DEP_LIBELF_INCLUDE_DIR", spec["libelf"].prefix.include
-                        ),
+                        define("LIBOMPTARGET_DEP_LIBELF_INCLUDE_DIR", spec["elf"].prefix.include),
                         self.stage.source_path + "/openmp",
                     ]
                 )

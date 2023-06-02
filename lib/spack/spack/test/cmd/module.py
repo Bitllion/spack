@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -41,7 +41,7 @@ def _module_files(module_type, *specs):
         ["rm", "doesnotexist"],  # Try to remove a non existing module
         ["find", "mpileaks"],  # Try to find a module with multiple matches
         ["find", "doesnotexist"],  # Try to find a module with no matches
-        ["find", "--unkown_args"],  # Try to give an unknown argument
+        ["find", "--unknown_args"],  # Try to give an unknown argument
     ]
 )
 def failure_args(request):
@@ -140,20 +140,16 @@ def test_find_recursive():
 
 
 @pytest.mark.db
-# DEPRECATED: remove blacklist in v0.20
-@pytest.mark.parametrize("config_name", ["exclude", "blacklist"])
-def test_find_recursive_excluded(database, module_configuration, config_name):
-    module_configuration(config_name)
+def test_find_recursive_excluded(database, module_configuration):
+    module_configuration("exclude")
 
     module("lmod", "refresh", "-y", "--delete-tree")
     module("lmod", "find", "-r", "mpileaks ^mpich")
 
 
 @pytest.mark.db
-# DEPRECATED: remove blacklist in v0.20
-@pytest.mark.parametrize("config_name", ["exclude", "blacklist"])
-def test_loads_recursive_excluded(database, module_configuration, config_name):
-    module_configuration(config_name)
+def test_loads_recursive_excluded(database, module_configuration):
+    module_configuration("exclude")
 
     module("lmod", "refresh", "-y", "--delete-tree")
     output = module("lmod", "loads", "-r", "mpileaks ^mpich")
@@ -210,7 +206,7 @@ def test_setdefault_command(mutable_database, mutable_config):
     for k in preferred, other_spec:
         assert os.path.exists(writers[k].layout.filename)
     assert os.path.exists(link_name) and os.path.islink(link_name)
-    assert os.path.realpath(link_name) == writers[other_spec].layout.filename
+    assert os.path.realpath(link_name) == os.path.realpath(writers[other_spec].layout.filename)
 
     # Reset the default to be the preferred spec
     module("lmod", "setdefault", preferred)
@@ -219,4 +215,4 @@ def test_setdefault_command(mutable_database, mutable_config):
     for k in preferred, other_spec:
         assert os.path.exists(writers[k].layout.filename)
     assert os.path.exists(link_name) and os.path.islink(link_name)
-    assert os.path.realpath(link_name) == writers[preferred].layout.filename
+    assert os.path.realpath(link_name) == os.path.realpath(writers[preferred].layout.filename)

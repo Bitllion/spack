@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -51,13 +51,16 @@ class Visit(CMakePackage):
 
     tags = ["radiuss"]
 
-    maintainers = ["cyrush"]
+    maintainers("cyrush")
 
     extendable = True
 
     executables = ["^visit$"]
 
     version("develop", branch="develop")
+    version("3.3.3", sha256="cc67abb7585e23b51ad576e797df4108641ae6c8c5e80e5359a279c729769187")
+    version("3.3.2", sha256="0ae7c38287598e8d7d238cf284ea8be1096dcf13f58a7e9e444a28a32c085b56")
+    version("3.3.1", sha256="2e969d3146b559fb833e4cdfaefa72f303d8ad368ef325f68506003f7bc317b9")
     version(
         "3.3.0",
         sha256="1a7485146133ac5f1e330d9029697750046ef8d9e9de23a6c2a3685c1c5f4aac",
@@ -69,7 +72,7 @@ class Visit(CMakePackage):
     version("3.0.1", sha256="a506d4d83b8973829e68787d8d721199523ce7ec73e7594e93333c214c2c12bd")
 
     root_cmakelists_dir = "src"
-    generator = "Ninja"
+    generator("ninja")
 
     variant("gui", default=True, description="Enable VisIt's GUI")
     variant("osmesa", default=False, description="Use OSMesa for off-screen CPU rendering")
@@ -79,13 +82,18 @@ class Visit(CMakePackage):
     variant("python", default=True, description="Enable Python support")
     variant("mpi", default=True, description="Enable parallel engine")
     variant("vtkm", default=False, description="Enable VTK-m support")
+    variant("conduit", default=True, description="Enable Conduit support")
+    variant("mfem", default=True, description="Enable MFEM support")
+    variant("plugins", default=True, description="Enable plugin development (xml2cmake)")
 
     patch("spack-changes-3.1.patch", when="@3.1.0:3.2.2")
     patch("spack-changes-3.0.1.patch", when="@3.0.1")
     patch("nonframework-qwt.patch", when="^qt~framework platform=darwin")
     patch("parallel-hdf5.patch", when="@3.0.1:3.2.2+hdf5+mpi")
     patch("parallel-hdf5-3.3.patch", when="@3.3.0:+hdf5+mpi")
-    patch("cmake-findvtkh-3.3.patch", when="@3.3.0:+vtkm")
+    patch("cmake-findvtkh-3.3.patch", when="@3.3.0:3.3.2+vtkm")
+    patch("cmake-findjpeg.patch", when="@3.1.0:3.2.2")
+    patch("cmake-findjpeg-3.3.patch", when="@3.3.0")
 
     # Fix pthread and librt link errors
     patch("visit32-missing-link-libs.patch", when="@3.2")
@@ -94,7 +102,6 @@ class Visit(CMakePackage):
     conflicts("+gui", when="+osmesa")
 
     depends_on("cmake@3.14.7:", type="build")
-    depends_on("ninja", type="build")
 
     depends_on("mpi", when="+mpi")
 
@@ -119,10 +126,10 @@ class Visit(CMakePackage):
 
     # VisIt doesn't work with later versions of qt.
     depends_on("qt+gui+opengl@5:5.14", when="+gui")
-    depends_on("qwt", when="+gui")
+    depends_on("qwt+opengl", when="+gui")
 
     # python@3.8 doesn't work with VisIt.
-    depends_on("python@3.2:3.7", when="+python")
+    depends_on("python@3.2:3.7,3.9:", when="+python")
     extends("python", when="+python")
 
     # VisIt uses the hdf5 1.8 api
@@ -139,6 +146,17 @@ class Visit(CMakePackage):
     depends_on("silo+mpi", when="+silo+mpi")
     depends_on("silo~mpi", when="+silo~mpi")
 
+    depends_on("conduit@0.8.3:", when="+conduit")
+    depends_on("conduit+python", when="+conduit")
+    depends_on("conduit+hdf5", when="+conduit+hdf5")
+    depends_on("conduit~hdf5", when="+conduit~hdf5")
+    depends_on("conduit+mpi", when="+conduit+mpi")
+    depends_on("conduit~mpi", when="+conduit~mpi")
+
+    depends_on("mfem@4.4:", when="+mfem")
+    depends_on("mfem+shared+exceptions+fms+conduit", when="+mfem")
+    depends_on("libfms@0.2:", when="+mfem")
+
     depends_on("adios2@2.6:", when="+adios2")
     depends_on("adios2+hdf5", when="+adios2+hdf5")
     depends_on("adios2~hdf5", when="+adios2~hdf5")
@@ -147,12 +165,14 @@ class Visit(CMakePackage):
     depends_on("adios2+python", when="+adios2+python")
     depends_on("adios2~python", when="+adios2~python")
 
-    # vtk-m also requires vtk-h. Disabling cuda since that requires
-    # later versions of vtk-m and vtk-h. The patch prevents vtk-m from
-    # throwing an exception whenever any vtk-m operations are performed.
-    depends_on("vtk-m@1.7.0+testlib~cuda", when="+vtkm")
-    depends_on("vtk-h@0.8.1+shared~mpi~openmp~cuda", when="+vtkm")
+    # For version 3.3.0 through 3.3.2, we used vtk-h to utilize vtk-m.
+    # For version starting with 3.3.3 we use vtk-m directly.
+    depends_on("vtk-m@1.7.0+testlib~cuda", when="@3.3.0:3.3.2+vtkm")
+    depends_on("vtk-h@0.8.1+shared~mpi~openmp~cuda", when="@3.3.0:3.3.2+vtkm")
+    depends_on("vtk-m@1.9.0+testlib~cuda", when="@3.3.3:+vtkm")
 
+    # This patch prevents vtk-m from throwing an exception whenever any
+    # vtk-m operations are performed.
     depends_on("vtk-m", patches=[patch("vtk-m_transport_tag_topology_field_in.patch")])
 
     depends_on("zlib")
@@ -193,10 +213,13 @@ class Visit(CMakePackage):
             self.define("VTK_MINOR_VERSION", spec["vtk"].version[1]),
             self.define("VISIT_VTK_DIR", spec["vtk"].prefix),
             self.define("VISIT_ZLIB_DIR", spec["zlib"].prefix),
+            self.define("VISIT_JPEG_DIR", spec["jpeg"].prefix),
             self.define("VISIT_USE_GLEW", False),
             self.define("VISIT_CONFIG_SITE", "NONE"),
-            self.define("VISIT_INSTALL_THIRD_PARTY", False),
         ]
+
+        # Provide the plugin compilation environment so as to extend VisIt
+        args.append(self.define_from_variant("VISIT_INSTALL_THIRD_PARTY", "plugins"))
 
         if "@3.1: platform=darwin" in spec:
             args.append(self.define("FIXUP_OSX", False))
@@ -268,6 +291,23 @@ class Visit(CMakePackage):
         if "+silo" in spec:
             args.append(self.define("VISIT_SILO_DIR", spec["silo"].prefix))
 
+        if "+conduit" in spec:
+            args.extend(
+                [
+                    self.define("VISIT_CONDUIT_DIR", spec["conduit"].prefix),
+                    self.define("CONDUIT_VERSION", spec["conduit"].version),
+                ]
+            )
+
+        if "+mfem" in spec:
+            args.extend(
+                [
+                    self.define("VISIT_MFEM_DIR", spec["mfem"].prefix),
+                    self.define("VISIT_FMS_DIR", spec["libfms"].prefix),
+                    self.define("VISIT_MFEM_INCDEP", "CONDUIT_INCLUDE_DIR;FMS_INCLUDE_DIR"),
+                ]
+            )
+
         if "+mpi" in spec:
             args.extend(
                 [
@@ -278,9 +318,30 @@ class Visit(CMakePackage):
         else:
             args.append(self.define("VISIT_PARALLEL", False))
 
-        if "+vtkm" in spec:
+        if "@3.3.0:3.3.2 +vtkm" in spec:
             args.append(self.define("VISIT_VTKM_DIR", spec["vtk-m"].prefix))
             args.append(self.define("VISIT_VTKH_DIR", spec["vtk-h"].prefix))
+
+        if "@3.3.3: +vtkm" in spec:
+            args.append(self.define("VISIT_VTKM_DIR", spec["vtk-m"].prefix))
+            args.append(
+                self.define(
+                    "CMAKE_EXE_LINKER_FLAGS",
+                    "-L%s/lib -L%s/lib" % (spec["hip"].prefix, spec["libx11"].prefix),
+                )
+            )
+            args.append(
+                self.define(
+                    "CMAKE_MODULE_LINKER_FLAGS",
+                    "-L%s/lib -L%s/lib" % (spec["hip"].prefix, spec["libx11"].prefix),
+                )
+            )
+            args.append(
+                self.define(
+                    "CMAKE_SHARED_LINKER_FLAGS",
+                    "-L%s/lib -L%s/lib" % (spec["hip"].prefix, spec["libx11"].prefix),
+                )
+            )
 
         return args
 

@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -16,11 +16,12 @@ class Precice(CMakePackage):
     homepage = "https://precice.org/"
     git = "https://github.com/precice/precice.git"
     url = "https://github.com/precice/precice/archive/v1.2.0.tar.gz"
-    maintainers = ["fsimonis", "MakisH"]
+    maintainers("fsimonis", "MakisH")
 
     tags = ["e4s"]
 
     version("develop", branch="develop")
+    version("2.5.0", sha256="76ec6ee0d1a66f6f3d3d2d11f03cfc5aa7ef4d9e5deb9b7a4b4455ec7f796c00")
     version("2.4.0", sha256="762e603fbcaa96c4fb0b378b7cb6789d09da0cf6193325603e5eeb13e4c7601c")
     version("2.3.0", sha256="57bab08e8b986f5faa364689d470940dbd9c138e5cfa7b861793e7db56b89da3")
     version("2.2.1", sha256="bca8cedfb5c86656e4fdfaca5cb982b861f9aba926538fa4411bc0d015e09c1f")
@@ -43,7 +44,7 @@ class Precice(CMakePackage):
 
     variant("mpi", default=True, description="Enable MPI support")
     variant("petsc", default=True, description="Enable PETSc support")
-    variant("python", default=False, description="Enable Python support")
+    variant("python", default=False, description="Enable Python support", when="@2:")
     variant("shared", default=True, description="Build shared libraries")
 
     depends_on("cmake@3.5:", type="build")
@@ -72,13 +73,8 @@ class Precice(CMakePackage):
     depends_on("petsc@3.6:", when="+petsc")
     depends_on("petsc@3.12:", when="+petsc@2.1.0:")
 
-    # Python 3 support was added in version 2.0
-    depends_on("python@2.7:2.8", when="@:1.9+python", type=("build", "run"))
-    depends_on("python@3:", when="@2:+python", type=("build", "run"))
-
-    # numpy 1.17+ requires Python 3
-    depends_on("py-numpy@:1.16", when="@:1.9+python", type=("build", "run"))
-    depends_on("py-numpy@1.17:", when="@2:+python", type=("build", "run"))
+    depends_on("python@3:", when="+python", type=("build", "run"))
+    depends_on("py-numpy@1.17:", when="+python", type=("build", "run"))
 
     # We require C++14 compiler support
     conflicts("%gcc@:4")
@@ -111,9 +107,7 @@ class Precice(CMakePackage):
                 return on
             return off
 
-        cmake_args = [
-            "-DBUILD_SHARED_LIBS:BOOL=%s" % variant_bool("+shared"),
-        ]
+        cmake_args = ["-DBUILD_SHARED_LIBS:BOOL=%s" % variant_bool("+shared")]
 
         cmake_args.append("-D%s:BOOL=%s" % (mpi_option, variant_bool("+mpi")))
 

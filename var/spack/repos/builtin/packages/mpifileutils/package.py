@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -67,6 +67,14 @@ class Mpifileutils(Package):
 
     variant("experimental", default=False, description="Install experimental tools")
     conflicts("+experimental", when="@:0.6")
+
+    def flag_handler(self, name, flags):
+        spec = self.spec
+        iflags = []
+        if name == "cflags":
+            if spec.satisfies("%oneapi"):
+                iflags.append("-Wno-error=implicit-function-declaration")
+        return (iflags, None, None)
 
     def cmake_args(self):
         args = std_cmake_args

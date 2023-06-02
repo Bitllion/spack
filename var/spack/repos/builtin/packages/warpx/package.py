@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -17,14 +17,22 @@ class Warpx(CMakePackage):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/ECP-WarpX/WarpX/archive/refs/tags/22.05.tar.gz"
+    url = "https://github.com/ECP-WarpX/WarpX/archive/refs/tags/23.03.tar.gz"
     git = "https://github.com/ECP-WarpX/WarpX.git"
 
-    maintainers = ["ax3l", "dpgrote", "MaxThevenet", "RemiLehe"]
+    maintainers("ax3l", "dpgrote", "MaxThevenet", "RemiLehe")
     tags = ["e4s", "ecp"]
 
     # NOTE: if you update the versions here, also see py-warpx
     version("develop", branch="development")
+    version("23.03", sha256="e1274aaa2a2c83d599d61c6e4c426db4ed5d4c5dc61a2002715783a6c4843718")
+    version("23.02", sha256="a6c63ebc38cbd224422259a814be501ac79a3b734dab7f59500b6957cddaaac1")
+    version("23.01", sha256="e853d01c20ea00c8ddedfa82a31a11d9d91a7f418d37d7f064cf8a241ea4da0c")
+    version("22.12", sha256="96019902cd6ea444a1ae515e8853048e9074822c168021e4ec1687adc72ef062")
+    version("22.11", sha256="528f65958f2f9e60a094e54eede698e871ccefc89fa103fe2a6f22e4a059515e")
+    version("22.10", sha256="3cbbbbb4d79f806b15e81c3d0e4a4401d1d03d925154682a3060efebd3b6ca3e")
+    version("22.09", sha256="dbef1318248c86c860cc47f7e18bbb0397818e3acdfb459e48075004bdaedea3")
+    version("22.08", sha256="5ff7fd628e8bf615c1107e6c51bc55926f3ef2a076985444b889d292fecf56d4")
     version("22.07", sha256="0286adc788136cb78033cb1678d38d36e42265bcfd3d0c361a9bcc2cfcdf241b")
     version("22.06", sha256="e78398e215d3fc6bc5984f5d1c2ddeac290dcbc8a8e9d196e828ef6299187db9")
     version("22.05", sha256="2fa69e6a4db36459b67bf663e8fbf56191f6c8c25dc76301dbd02a36f9b50479")
@@ -92,6 +100,7 @@ class Warpx(CMakePackage):
     depends_on("boost@1.66.0: +math", when="+qedtablegen")
     depends_on("cmake@3.15.0:", type="build")
     depends_on("cmake@3.18.0:", type="build", when="@22.01:")
+    depends_on("cmake@3.20.0:", type="build", when="@22.08:")
     depends_on("mpi", when="+mpi")
     with when("compute=cuda"):
         depends_on("cuda@9.2.88:")
@@ -187,11 +196,18 @@ class Warpx(CMakePackage):
             self.define_from_variant("WarpX_QED_TABLE_GEN", "qedtablegen"),
         ]
 
-        with when("+openpmd"):
+        # FindMPI needs an extra hint sometimes, particularly on cray systems
+        if "+mpi" in spec:
+            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
+            args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
+
+        if "+openpmd" in spec:
             args.append("-DWarpX_openpmd_internal=OFF")
 
+        # Work-around for SENSEI 4.0: wrong install location for CMake config
+        #   https://github.com/SENSEI-insitu/SENSEI/issues/79
         if "+sensei" in spec:
-            args.append(self.define("SENSEI_DIR", join_path(spec["sensei"].prefix.lib, "cmake")))
+            args.append(self.define("SENSEI_DIR", spec["sensei"].prefix.lib.cmake))
 
         return args
 

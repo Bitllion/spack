@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -28,6 +28,10 @@ class Tophat(AutotoolsPackage):
     depends_on("bowtie2", type="run")
 
     parallel = False
+
+    def patch(self):
+        # Newer versions of autoconf hate calling AM_INIT_AUTOMAKE twice
+        filter_file(r"^AM_INIT_AUTOMAKE$", "", "configure.ac")
 
     def setup_build_environment(self, env):
         env.append_flags("CFLAGS", self.compiler.cxx98_flag)

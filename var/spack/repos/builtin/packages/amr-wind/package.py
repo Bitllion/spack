@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -13,7 +13,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/Exawind/amr-wind"
     git = "https://github.com/Exawind/amr-wind.git"
 
-    maintainers = ["jrood-nrel"]
+    maintainers("jrood-nrel", "psakievich")
 
     tags = ["ecp", "ecp-apps"]
 
@@ -28,8 +28,9 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Enable OpenMP for CPU builds")
     variant("shared", default=True, description="Build shared libraries")
     variant("tests", default=True, description="Activate regression tests")
+    variant("tiny_profile", default=False, description="Activate tiny profile")
 
-    depends_on("hypre~int64+shared@2.20.0:", when="+hypre")
+    depends_on("hypre~int64@2.20.0:", when="+hypre")
     depends_on("hypre+mpi", when="+hypre+mpi")
     for arch in CudaPackage.cuda_arch_values:
         depends_on("hypre+cuda cuda_arch=%s" % arch, when="+cuda+hypre cuda_arch=%s" % arch)
@@ -42,10 +43,6 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     # propagate variants to ascent
     depends_on("ascent~mpi", when="+ascent~mpi")
     depends_on("ascent+mpi", when="+ascent+mpi")
-    depends_on("ascent~shared", when="+ascent~shared")
-    depends_on("ascent+shared", when="+ascent+shared")
-    depends_on("ascent~openmp", when="+ascent~openmp")
-    depends_on("ascent+openmp", when="+ascent+openmp")
     for arch in CudaPackage.cuda_arch_values:
         depends_on("ascent+cuda cuda_arch=%s" % arch, when="+ascent+cuda cuda_arch=%s" % arch)
 
@@ -64,7 +61,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             env.append_flags("CXXFLAGS", "-no-ipo")
 
     def cmake_args(self):
-        define = CMakePackage.define
+        define = self.define
 
         vs = [
             "mpi",
@@ -77,6 +74,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             "openfast",
             "rocm",
             "tests",
+            "tiny_profile",
         ]
         args = [self.define_from_variant("AMR_WIND_ENABLE_%s" % v.upper(), v) for v in vs]
 

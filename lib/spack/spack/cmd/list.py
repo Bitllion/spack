@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -12,18 +12,15 @@ import math
 import os
 import re
 import sys
+from html import escape
 
 import llnl.util.tty as tty
 from llnl.util.tty.colify import colify
 
+import spack.cmd.common.arguments as arguments
 import spack.dependency
 import spack.repo
 from spack.version import VersionList
-
-if sys.version_info > (3, 1):
-    from html import escape  # novm
-else:
-    from cgi import escape
 
 description = "list and search available packages"
 section = "basic"
@@ -59,18 +56,28 @@ def setup_parser(subparser):
         help="format to be used to print the output [default: name_only]",
     )
     subparser.add_argument(
-        "--update",
-        metavar="FILE",
-        default=None,
-        action="store",
-        help="write output to the specified file, if any package is newer",
-    )
-    subparser.add_argument(
         "-v",
         "--virtuals",
         action="store_true",
         default=False,
         help="include virtual packages in list",
+    )
+    arguments.add_common_arguments(subparser, ["tags"])
+
+    # Doesn't really make sense to update in count mode.
+    count_or_update = subparser.add_mutually_exclusive_group()
+    count_or_update.add_argument(
+        "--count",
+        action="store_true",
+        default=False,
+        help="display the number of packages that would be listed",
+    )
+    count_or_update.add_argument(
+        "--update",
+        metavar="FILE",
+        default=None,
+        action="store",
+        help="write output to the specified file, if any package is newer",
     )
 
 
@@ -120,9 +127,9 @@ def filter_by_name(pkgs, args):
 @formatter
 def name_only(pkgs, out):
     indent = 0
-    if out.isatty():
-        tty.msg("%d packages." % len(pkgs))
     colify(pkgs, indent=indent, output=out)
+    if out.isatty():
+        tty.msg("%d packages" % len(pkgs))
 
 
 def github_url(pkg):
@@ -306,6 +313,11 @@ def list(parser, args):
     # Filter the set appropriately
     sorted_packages = filter_by_name(pkgs, args)
 
+    # If tags have been specified on the command line, filter by tags
+    if args.tags:
+        packages_with_tags = spack.repo.path.packages_with_tags(*args.tags)
+        sorted_packages = [p for p in sorted_packages if p in packages_with_tags]
+
     if args.update:
         # change output stream if user asked for update
         if os.path.exists(args.update):
@@ -317,6 +329,9 @@ def list(parser, args):
         with open(args.update, "w") as f:
             formatter(sorted_packages, f)
 
+    elif args.count:
+        # just print the number of packages in the result
+        print(len(sorted_packages))
     else:
-        # Print to stdout
+        # print formatted package list
         formatter(sorted_packages, sys.stdout)
